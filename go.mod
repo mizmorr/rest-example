@@ -1,4 +1,4 @@
-module rest
+module rest-example
 
 go 1.22.5
 

@@ -1,0 +1,12 @@
+# Logger settings
+log_level: info
+
+# Postgres settings
+pg_URL: postgres://postgres:postgres@localhost/rest?sslmode=disable
+pg_migration_path: /home/temporary/work/rest/config/config.yaml
+
+# HTTP settings
+http_address: localhost:8080
+
+# File path
+file_path: ../store/files/

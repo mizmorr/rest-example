@@ -26,14 +26,15 @@ func Get() *Config {
 		config.WithOptions(func(opt *config.Options) {
 			opt.DecoderConfig.TagName = "yaml"
 		})
-		err := config.LoadFiles("config.yml")
+		err := config.LoadFiles("../../config/config.yaml")
 		if err != nil {
 			panic(err)
 		}
-		err = config.BindStruct("config", conf)
+		err = config.BindStruct("", &conf)
 		if err != nil {
 			panic(err)
 		}
+
 	})
 	return &conf
 

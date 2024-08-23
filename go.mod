@@ -1,4 +1,4 @@
-module rest-example
+module github.com/mizmorr/rest-example
 
 go 1.22.5
 

@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/mizmorr/rest-example/config"
+	store "github.com/mizmorr/rest-example/store/pg"
 )
 
 func main() {
@@ -14,7 +14,10 @@ func main() {
 }
 
 func run() error {
-	c := config.Get()
-	fmt.Println(c)
+	ctx := context.Background()
+	_, err := store.Dial(ctx)
+	if err != nil {
+		return err
+	}
 	return nil
 }

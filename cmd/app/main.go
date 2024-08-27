@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 
-	store "github.com/mizmorr/rest-example/store/pg"
+	store "github.com/mizmorr/rest-example/store"
 )
 
 func main() {
@@ -15,7 +15,7 @@ func main() {
 
 func run() error {
 	ctx := context.Background()
-	_, err := store.Dial(ctx)
+	_, err := store.New(ctx)
 	if err != nil {
 		return err
 	}

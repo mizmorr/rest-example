@@ -5,7 +5,8 @@ log_level: debug
 pg_URL: postgres://postgres:@localhost/rest?sslmode=disable
 # BAD: pg_migration_path: /home/temporary/work/rest/config/config.yaml
 pg_migration_path: ../../store/files/migrations/
-
+pg_timeout: 1
+pg_conn_attempts: 10
 
 # HTTP settings
 http_address: localhost:8080

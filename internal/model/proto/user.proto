@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package user;
+option go_package = "./";
+
+message User {
+  int64 ID = 1;
+  string Firstname = 2;
+  string Lastname = 3;
+  string CreatedAt = 4;
+}
+

@@ -11,7 +11,7 @@ import (
 )
 
 type Store struct {
-	pg *pg.DB
+	Pg *pg.DB
 }
 
 var (
@@ -30,7 +30,7 @@ func New(ctx context.Context) (*Store, error) {
 		return nil, errors.Wrap(err, "failed to run migrations")
 	}
 	if pgDB != nil {
-		store.pg = pgDB
+		store.Pg = pgDB
 
 	}
 	return &store, nil

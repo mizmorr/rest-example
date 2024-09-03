@@ -9,13 +9,15 @@ import (
 )
 
 type Config struct {
-	LogLevel        string        `yaml:"log_level"`
-	PgURL           string        `yaml:"pg_URL"`
-	PgMigrationPath string        `yaml:"pg_migration_path"`
-	PgTimeout       time.Duration `yaml:"pg_timeout"`
-	PgConnAttempts  int           `yaml:"pg_conn_attempts"`
-	HTTPAddress     string        `yaml:"http_address"`
-	FilePath        string        `yaml:"file_path"`
+	LogLevel            string        `yaml:"log_level"`
+	PgURL               string        `yaml:"pg_URL"`
+	PgMigrationPath     string        `yaml:"pg_migration_path"`
+	PgTimeout           time.Duration `yaml:"pg_timeout"`
+	PgConnAttempts      int           `yaml:"pg_conn_attempts"`
+	PgHealthCheckPeriod time.Duration `yaml:"pg_health_check_period"`
+	PgMaxIdleTime       time.Duration `yaml:"pg_max_idle_time"`
+	HTTPAddress         string        `yaml:"http_address"`
+	FilePath            string        `yaml:"file_path"`
 }
 
 var (

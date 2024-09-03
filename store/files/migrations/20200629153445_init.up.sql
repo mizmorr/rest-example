@@ -6,3 +6,4 @@ CREATE TABLE users (
 	CONSTRAINT "pk_user_id" PRIMARY KEY (id)
 );
 
+insert into users values('3410daa9-5443-4285-b960-0964ca8b973b','john', 'doe');

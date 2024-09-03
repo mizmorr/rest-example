@@ -12,7 +12,7 @@ import (
 )
 
 type DB struct {
-	pg *pgxpool.Pool
+	*pgxpool.Pool
 }
 
 var (
@@ -30,6 +30,8 @@ func Dial(ctx context.Context) (*DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("postgres - NewPostgres - pgxpool.ParseConfig: %w", err)
 	}
+	poolConfig.MaxConnIdleTime = cfg.PgMaxIdleTime
+	poolConfig.HealthCheckPeriod = cfg.PgHealthCheckPeriod
 
 	once.Do(func() {
 		var db *pgxpool.Pool
@@ -56,12 +58,9 @@ func Dial(ctx context.Context) (*DB, error) {
 	}
 	return pgInstance, nil
 }
-func (db *DB) Ping(ctx context.Context) error {
-	return db.pg.Ping(ctx)
-}
 
 func (db *DB) Close() {
-	if db.pg != nil {
-		db.pg.Close()
+	if db != nil {
+		db.Close()
 	}
 }

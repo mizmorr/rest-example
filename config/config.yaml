@@ -7,6 +7,8 @@ pg_URL: postgres://postgres:@localhost/rest?sslmode=disable
 pg_migration_path: ../../store/files/migrations/
 pg_timeout: 1
 pg_conn_attempts: 10
+pg_health_check_period: 1
+pg_max_idle_time: 30
 
 # HTTP settings
 http_address: localhost:8080

@@ -16,7 +16,7 @@ func NewUserRepo(db *pg.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
 
-func (repo *UserRepo) Get_User(ctx context.Context, id uuid.UUID) (*user.PGUser, error) {
+func (repo *UserRepo) Get(ctx context.Context, id uuid.UUID) (*user.PGUser, error) {
 
 	user := user.PGUser{}
 	query := `

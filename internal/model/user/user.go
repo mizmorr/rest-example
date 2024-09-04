@@ -20,7 +20,7 @@ type PGUser struct {
 	CreatedAt time.Time `pg:"created_at,notnull"`
 }
 
-func (user *User) To_PGUser() *PGUser {
+func (user *User) ToPg() *PGUser {
 
 	return &PGUser{
 		ID:        user.ID,
@@ -30,7 +30,7 @@ func (user *User) To_PGUser() *PGUser {
 	}
 }
 
-func (pgUser *PGUser) To_User() *User {
+func (pgUser *PGUser) ToWeb() *User {
 	return &User{
 		ID:        pgUser.ID,
 		Firstname: pgUser.Firstname,

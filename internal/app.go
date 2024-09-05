@@ -2,11 +2,15 @@ package internal
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mizmorr/rest-example/internal/controller"
-	"github.com/mizmorr/rest-example/internal/server"
 	"github.com/mizmorr/rest-example/pkg/logger"
+	"github.com/mizmorr/rest-example/pkg/server"
 	"github.com/mizmorr/rest-example/service"
 	"github.com/mizmorr/rest-example/store"
 	"github.com/pkg/errors"
@@ -15,29 +19,40 @@ import (
 func Run() error {
 	ctx := context.Background()
 
-
 	//logger
-	l:= logger.Get()
+	l := logger.Get()
 
-	store, err:= store.New(ctx)
-	if err!= nil {
-		return errors.Wrap(err,"store.New failed")
+	store, err := store.New(ctx)
+	if err != nil {
+		return errors.Wrap(err, "store.New failed")
 	}
 
-	svc,err := service.NewUserWebService(store,ctx)
+	svc, err := service.NewUserWebService(store, ctx)
 
-	if err!= nil {
+	if err != nil {
 		return errors.Wrap(err, "service.NewUserWebService failed")
 	}
 
 	//user controller
 
-	userController:= controller.NewUsers(ctx,svc,l)
+	userController := controller.NewUsers(ctx, svc, l)
 
-	handler:= gin.New()
+	handler := gin.New()
 
-	server.NewRouter(handler,userController)
-	l.Info().Msg("Server is listening ...")
-	handler.Run(":8080")
-	return nil
+	server.NewRouter(handler, userController)
+
+	httpServer := server.New(handler)
+
+	interrupt := make(chan os.Signal, 1)
+	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
+
+	select {
+	case s := <-interrupt:
+		l.Info().Msg("[app.Run] - signal " + s.String())
+	case err = <-httpServer.Notify():
+		l.Error().Err(fmt.Errorf("[app.Run] - httpServer.Notify " + err.Error()))
+	}
+
+	return httpServer.Shutdown()
+
 }

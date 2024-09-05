@@ -3,12 +3,12 @@ package pg
 import (
 	"context"
 	"fmt"
-	"log"
 	"sync"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/mizmorr/rest-example/config"
+	"github.com/mizmorr/rest-example/pkg/logger"
 )
 
 type DB struct {
@@ -32,7 +32,7 @@ func Dial(ctx context.Context) (*DB, error) {
 	}
 	poolConfig.MaxConnIdleTime = cfg.PgMaxIdleTime
 	poolConfig.HealthCheckPeriod = cfg.PgHealthCheckPeriod
-
+	log := logger.Get()
 	once.Do(func() {
 		var db *pgxpool.Pool
 		for con.Attempts > 0 {
@@ -41,7 +41,7 @@ func Dial(ctx context.Context) (*DB, error) {
 				break
 			}
 
-			log.Printf("Postgres is trying to connect, attempts left: %d", con.Attempts)
+			log.Info().Msg(fmt.Sprintf("Postgres is trying to connect, attempts left: %d", con.Attempts))
 
 			time.Sleep(con.Timeout)
 

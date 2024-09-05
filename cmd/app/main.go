@@ -1,8 +1,7 @@
 package main
 
 import (
-
-	"github.com/mizmorr/rest-example/internal"
+	app "github.com/mizmorr/rest-example/internal"
 )
 
 func main() {
@@ -14,5 +13,5 @@ func main() {
 
 func run() error {
 
-	return internal.Run()
+	return app.Run()
 }

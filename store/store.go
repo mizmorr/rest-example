@@ -2,7 +2,6 @@ package store
 
 import (
 	"context"
-	"log"
 	"time"
 
 	"github.com/pkg/errors"
@@ -20,6 +19,7 @@ type Store struct {
 
 var (
 	store Store
+	log   = logger.Get()
 )
 
 func New(ctx context.Context) (*Store, error) {
@@ -28,8 +28,7 @@ func New(ctx context.Context) (*Store, error) {
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to connect to database")
 	}
-	//TODO: change to custom logger
-	log.Println("Running pg migrations...")
+	log.Info().Msg("Running pg migrations...")
 	if err := migration.Run_migrations(); err != nil {
 		return nil, errors.Wrap(err, "failed to run migrations")
 	}

@@ -1,8 +1,11 @@
 package logger
 
 import (
+	"fmt"
 	"os"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/mizmorr/rest-example/config"
 	"github.com/rs/zerolog"
@@ -19,7 +22,8 @@ var (
 
 func Get() *Logger {
 	once.Do(func() {
-		zeroLogger := zerolog.New(os.Stderr).With().Timestamp().Logger()
+		writer := newConsoleWriter()
+		zeroLogger := zerolog.New(writer).With().Logger()
 		cfg := config.Get()
 		switch cfg.LogLevel {
 		case "debug":
@@ -40,4 +44,25 @@ func Get() *Logger {
 		logger = Logger{&zeroLogger}
 	})
 	return &logger
+}
+
+func newConsoleWriter() *zerolog.ConsoleWriter {
+	// zeroLogger := zerolog.New(os.Stderr).With().Timestamp().Caller().Logger()
+	writer := zerolog.ConsoleWriter{
+		Out: os.Stderr,
+		// TimeFormat: time.RFC1123,
+		FormatLevel: func(i interface{}) string {
+			return strings.ToUpper(fmt.Sprintf("[%s]", i))
+		},
+		FormatMessage: func(i interface{}) string {
+			return fmt.Sprintf("| %s ", i)
+		},
+		FormatTimestamp: func(i interface{}) string {
+			return fmt.Sprintf("%v |", time.Now().Format(time.RFC822))
+		},
+		PartsExclude: []string{
+			zerolog.TimeFieldFormat,
+		},
+	}
+	return &writer
 }

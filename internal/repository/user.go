@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/mizmorr/rest-example/internal/model/user"
+	"github.com/mizmorr/rest-example/internal/model"
 	"github.com/mizmorr/rest-example/store/pg"
 )
 
@@ -16,9 +16,9 @@ func NewUserRepo(db *pg.DB) *UserRepo {
 	return &UserRepo{db: db}
 }
 
-func (repo *UserRepo) Get(ctx context.Context, id uuid.UUID) (*user.PGUser, error) {
+func (repo *UserRepo) Get(ctx context.Context, id uuid.UUID) (*model.PGUser, error) {
 
-	user := user.PGUser{}
+	user := model.PGUser{}
 	query := `
 		select * from users where id=$1
 	`

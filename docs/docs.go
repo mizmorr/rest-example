@@ -46,6 +46,10 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {}
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {}
                     }
                 }
             }

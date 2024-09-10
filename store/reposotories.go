@@ -4,9 +4,9 @@ import (
 	"context"
 
 	"github.com/google/uuid"
-	"github.com/mizmorr/rest-example/internal/model/user"
+	"github.com/mizmorr/rest-example/internal/model"
 )
 
 type UserRepo interface {
-	Get(ctx context.Context, id uuid.UUID) (*user.PGUser, error)
+	Get(ctx context.Context, id uuid.UUID) (*model.PGUser, error)
 }

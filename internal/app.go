@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	"github.com/gin-gonic/gin"
+	"github.com/mizmorr/rest-example/config"
 	"github.com/mizmorr/rest-example/internal/controller"
 	"github.com/mizmorr/rest-example/internal/router"
 	"github.com/mizmorr/rest-example/pkg/logger"
@@ -21,6 +22,7 @@ import (
 func Run() error {
 	ctx := context.Background()
 
+	cfg := config.Get()
 	//logger
 	l := logger.Get()
 
@@ -37,14 +39,14 @@ func Run() error {
 
 	//user controller
 
-	userController := controller.NewUsers(ctx, svc, l)
+	userController := controller.NewUsers(ctx, svc)
 
 	handler := gin.New()
 
 	router.NewRouter(handler, userController)
 
 	httpServer := server.New(handler)
-
+	l.Info().Msg(fmt.Sprintf("Server is running on %v ...", cfg.HTTPAddress))
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt, syscall.SIGTERM)
 

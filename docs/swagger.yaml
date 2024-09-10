@@ -41,6 +41,9 @@ paths:
         "400":
           description: Bad Request
           schema: {}
+        "404":
+          description: Not Found
+          schema: {}
       summary: Get user
       tags:
       - User

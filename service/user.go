@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/mizmorr/rest-example/internal/model/user"
+	"github.com/mizmorr/rest-example/internal/model"
 	"github.com/pkg/errors"
 
 	"github.com/google/uuid"
@@ -16,7 +16,7 @@ type UserWebService struct {
 	ctx   context.Context
 }
 
-func NewUserWebService(store *store.Store, ctx context.Context)  (*UserWebService,error) {
+func NewUserWebService(store *store.Store, ctx context.Context) (*UserWebService, error) {
 	if store == nil {
 		return nil, errors.New("store is nil")
 	}
@@ -26,7 +26,7 @@ func NewUserWebService(store *store.Store, ctx context.Context)  (*UserWebServic
 	}, nil
 }
 
-func (svc *UserWebService) GetUser(ctx context.Context, id uuid.UUID) (*user.User, error) {
+func (svc *UserWebService) GetUser(ctx context.Context, id uuid.UUID) (*model.User, error) {
 
 	user, err := svc.store.User.Get(ctx, id)
 	if err != nil {

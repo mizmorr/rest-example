@@ -2,28 +2,24 @@ package controller
 
 import (
 	"context"
-	"fmt"
 
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/mizmorr/rest-example/pkg/logger"
 	"github.com/mizmorr/rest-example/service"
 )
 
 type UserController struct {
-	ctx    context.Context
-	svc    *service.UserWebService
-	logger *logger.Logger
+	ctx context.Context
+	svc *service.UserWebService
 }
 
-func NewUsers(ctx context.Context, svc *service.UserWebService, logger *logger.Logger) *UserController {
+func NewUsers(ctx context.Context, svc *service.UserWebService) *UserController {
 
 	return &UserController{
-		ctx:    ctx,
-		svc:    svc,
-		logger: logger,
+		ctx: ctx,
+		svc: svc,
 	}
 }
 
@@ -37,21 +33,28 @@ func NewUsers(ctx context.Context, svc *service.UserWebService, logger *logger.L
 //	@Param		id	path		string	true	"userid"
 //	@Success	200	{object}	user.User
 //	@Failure	400	{object}	error
-//	@Router		/user/{id} [get]
+//	@Failure	404	{object}	error
+//
+// @Router		/user/{id} [get]
 func (c *UserController) Get(g *gin.Context) {
 
 	userid_raw, ok := g.Params.Get("id")
 	if !ok {
-		g.AbortWithError(http.StatusBadRequest, fmt.Errorf("no id provided"))
+		g.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{"status": "id not provided"})
+		return
 	}
 	userid, err := uuid.Parse(userid_raw)
 	if err != nil {
-		g.AbortWithError(http.StatusBadRequest, fmt.Errorf("could not parse userid: %v", userid_raw))
+
+		g.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{"status": "could not parse userid"})
+		return
 	}
 	user, err := c.svc.GetUser(g.Request.Context(), userid)
 
 	if err != nil {
-		g.AbortWithError(http.StatusNotFound, fmt.Errorf("could not found user: %v", userid))
+
+		g.AbortWithStatusJSON(http.StatusNotFound, map[string]string{"status": "could not found user"})
+		return
 	}
 	g.JSON(http.StatusOK, user)
 

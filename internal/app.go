@@ -9,10 +9,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mizmorr/rest-example/internal/controller"
+	"github.com/mizmorr/rest-example/internal/router"
 	"github.com/mizmorr/rest-example/pkg/logger"
 	"github.com/mizmorr/rest-example/pkg/server"
 	"github.com/mizmorr/rest-example/service"
 	"github.com/mizmorr/rest-example/store"
+
 	"github.com/pkg/errors"
 )
 
@@ -39,7 +41,7 @@ func Run() error {
 
 	handler := gin.New()
 
-	server.NewRouter(handler, userController)
+	router.NewRouter(handler, userController)
 
 	httpServer := server.New(handler)
 

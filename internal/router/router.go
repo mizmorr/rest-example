@@ -1,9 +1,13 @@
-package server
+package router
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "github.com/mizmorr/rest-example/docs"
+
 	"github.com/mizmorr/rest-example/internal/controller"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 func NewRouter(handler *gin.Engine, c *controller.UserController) {
@@ -15,4 +19,5 @@ func NewRouter(handler *gin.Engine, c *controller.UserController) {
 		user_routes := v1.Group("/user")
 		user_routes.GET("/:id", c.Get)
 	}
+	handler.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

@@ -1,0 +1,47 @@
+basePath: /v1
+definitions:
+  user.User:
+    properties:
+      created_at:
+        type: string
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+    required:
+    - firstname
+    - lastname
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is example of RESTful api
+  title: Swagger Example API
+  version: "1.0"
+paths:
+  /user/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: userid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/user.User'
+        "400":
+          description: Bad Request
+          schema: {}
+      summary: Get user
+      tags:
+      - User
+swagger: "2.0"

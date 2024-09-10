@@ -27,7 +27,18 @@ func NewUsers(ctx context.Context, svc *service.UserWebService, logger *logger.L
 	}
 }
 
-func (c *UserController) Get(g *gin.Context)  {
+// Get			 godoc
+//
+//	@Summary	Get user
+//	@Tags		User
+//	@Schemes
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path		string	true	"userid"
+//	@Success	200	{object}	user.User
+//	@Failure	400	{object}	error
+//	@Router		/user/{id} [get]
+func (c *UserController) Get(g *gin.Context) {
 
 	userid_raw, ok := g.Params.Get("id")
 	if !ok {
@@ -43,6 +54,5 @@ func (c *UserController) Get(g *gin.Context)  {
 		g.AbortWithError(http.StatusNotFound, fmt.Errorf("could not found user: %v", userid))
 	}
 	g.JSON(http.StatusOK, user)
-
 
 }

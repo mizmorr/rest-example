@@ -9,4 +9,5 @@ import (
 
 type UserRepo interface {
 	Get(ctx context.Context, id uuid.UUID) (*model.PGUser, error)
+	Create(ctx context.Context, user *model.PGUser) error
 }

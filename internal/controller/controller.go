@@ -2,11 +2,13 @@ package controller
 
 import (
 	"context"
+	"time"
 
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/mizmorr/rest-example/internal/model"
 	"github.com/mizmorr/rest-example/service"
 )
 
@@ -31,7 +33,7 @@ func NewUsers(ctx context.Context, svc *service.UserWebService) *UserController 
 //	@Accept		json
 //	@Produce	json
 //	@Param		id	path		string	true	"userid"
-//	@Success	200	{object}	user.User
+//	@Success	200	{object}	model.User
 //	@Failure	400	{object}	error
 //	@Failure	404	{object}	error
 //
@@ -57,5 +59,39 @@ func (c *UserController) Get(g *gin.Context) {
 		return
 	}
 	g.JSON(http.StatusOK, user)
+
+}
+
+// Create		godoc
+//
+//	@Summary	Create user
+//	@Tags		User
+//	@Schemes
+//	@Accept		json
+//	@Produce	json
+//	@Param		data body	model.User	true	"user data"
+//	@Success	200	{object}	model.User
+//	@Failure	400	{object}	error
+//	@Failure	304	{object}	error
+//
+// @Router		/user/create [post]
+func (c *UserController) Create(g *gin.Context) {
+	user := model.User{}
+	user.CreatedAt = time.Now()
+	_ = g.Bind(&user)
+	g.JSON(http.StatusNotFound, user)
+	// if err != nil {
+	// 	g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "failed"})
+	// 	return
+	// }
+
+	// createdUser, err := c.svc.CreateUser(g.Request.Context(), &user)
+
+	// if err != nil {
+	// 	g.AbortWithStatusJSON(http.StatusNotModified, gin.H{"status": "user create failed"})
+	// 	return
+	// }
+
+	// g.JSON(http.StatusOK, createdUser)
 
 }

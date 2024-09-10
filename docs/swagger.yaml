@@ -1,6 +1,6 @@
 basePath: /v1
 definitions:
-  user.User:
+  model.User:
     properties:
       created_at:
         type: string
@@ -37,7 +37,7 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/user.User'
+            $ref: '#/definitions/model.User'
         "400":
           description: Bad Request
           schema: {}
@@ -45,6 +45,33 @@ paths:
           description: Not Found
           schema: {}
       summary: Get user
+      tags:
+      - User
+  /user/create:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "304":
+          description: Not Modified
+          schema: {}
+        "400":
+          description: Bad Request
+          schema: {}
+      summary: Create user
       tags:
       - User
 swagger: "2.0"

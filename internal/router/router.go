@@ -18,6 +18,7 @@ func NewRouter(handler *gin.Engine, c *controller.UserController) {
 	{
 		user_routes := v1.Group("/user")
 		user_routes.GET("/:id", c.Get)
+		user_routes.POST("/create", c.Create)
 	}
 	handler.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

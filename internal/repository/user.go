@@ -28,5 +28,17 @@ func (repo *UserRepo) Get(ctx context.Context, id uuid.UUID) (*model.PGUser, err
 		return nil, err
 	}
 	return &user, nil
+}
 
+func (repo *UserRepo) Create(ctx context.Context, user *model.PGUser) error {
+	var id uuid.UUID
+	query := `
+	input into users values($1,$2,$3) returning id
+	`
+	err := repo.db.QueryRow(ctx, query, user.ID, user.Firstname, user.Lastname).Scan(&id)
+
+	if err != nil {
+		return err
+	}
+	return nil
 }

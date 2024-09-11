@@ -34,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "$ref": "#/definitions/model.UserCreateRequest"
                         }
                     }
                 ],
@@ -111,6 +111,21 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "id": {
+                    "type": "string"
+                },
+                "lastname": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.UserCreateRequest": {
+            "type": "object",
+            "required": [
+                "firstname",
+                "lastname"
+            ],
+            "properties": {
+                "firstname": {
                     "type": "string"
                 },
                 "lastname": {

@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"time"
+	"log"
 
 	"net/http"
 
@@ -69,29 +69,27 @@ func (c *UserController) Get(g *gin.Context) {
 //	@Schemes
 //	@Accept		json
 //	@Produce	json
-//	@Param		data body	model.User	true	"user data"
+//	@Param		data body		model.UserCreateRequest	true	"user data"
 //	@Success	200	{object}	model.User
 //	@Failure	400	{object}	error
 //	@Failure	304	{object}	error
 //
 // @Router		/user/create [post]
 func (c *UserController) Create(g *gin.Context) {
-	user := model.User{}
-	user.CreatedAt = time.Now()
-	_ = g.Bind(&user)
-	g.JSON(http.StatusNotFound, user)
-	// if err != nil {
-	// 	g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "failed"})
-	// 	return
-	// }
+	userCreateReq := model.UserCreateRequest{}
+	err := g.Bind(&userCreateReq)
+	if err != nil {
+		g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "failed"})
+		return
+	}
+	createdUser, err := c.svc.CreateUser(g.Request.Context(), &userCreateReq)
 
-	// createdUser, err := c.svc.CreateUser(g.Request.Context(), &user)
+	if err != nil {
+		log.Default().Println(err)
+		g.AbortWithStatusJSON(http.StatusNotModified, gin.H{"status": err})
+		return
+	}
 
-	// if err != nil {
-	// 	g.AbortWithStatusJSON(http.StatusNotModified, gin.H{"status": "user create failed"})
-	// 	return
-	// }
-
-	// g.JSON(http.StatusOK, createdUser)
+	g.JSON(http.StatusOK, createdUser)
 
 }

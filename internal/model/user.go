@@ -13,11 +13,15 @@ type User struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 type PGUser struct {
-	tableName struct{}  `pg:"users" gorm:"primaryKey"`
 	ID        uuid.UUID `pg:"id,notnull, pk"`
 	Firstname string    `pg:"firstname,notnull"`
 	Lastname  string    `pg:"lastname,notnull"`
 	CreatedAt time.Time `pg:"created_at,notnull"`
+}
+
+type UserCreateRequest struct {
+	Firstname string `json:"firstname" validate:"required"`
+	Lastname  string `json:"lastname" validate:"required"`
 }
 
 func (user *User) ToPg() *PGUser {
@@ -36,5 +40,12 @@ func (pgUser *PGUser) ToWeb() *User {
 		Firstname: pgUser.Firstname,
 		Lastname:  pgUser.Lastname,
 		CreatedAt: pgUser.CreatedAt,
+	}
+}
+
+func (ucr *UserCreateRequest) ToPg() *PGUser {
+	return &PGUser{
+		Firstname: ucr.Firstname,
+		Lastname:  ucr.Lastname,
 	}
 }

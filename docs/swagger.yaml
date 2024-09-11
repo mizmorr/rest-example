@@ -14,6 +14,16 @@ definitions:
     - firstname
     - lastname
     type: object
+  model.UserCreateRequest:
+    properties:
+      firstname:
+        type: string
+      lastname:
+        type: string
+    required:
+    - firstname
+    - lastname
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -57,7 +67,7 @@ paths:
         name: data
         required: true
         schema:
-          $ref: '#/definitions/model.User'
+          $ref: '#/definitions/model.UserCreateRequest'
       produces:
       - application/json
       responses:

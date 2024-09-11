@@ -30,15 +30,20 @@ func (repo *UserRepo) Get(ctx context.Context, id uuid.UUID) (*model.PGUser, err
 	return &user, nil
 }
 
-func (repo *UserRepo) Create(ctx context.Context, user *model.PGUser) error {
-	var id uuid.UUID
+func (repo *UserRepo) Create(ctx context.Context, user *model.PGUser) (uuid.UUID, error) {
+	var (
+		newUserID  uuid.UUID = uuid.New()
+		returnedID uuid.UUID
+	)
+
 	query := `
-	input into users values($1,$2,$3) returning id
+	insert into users values($1,$2,$3) returning id
 	`
-	err := repo.db.QueryRow(ctx, query, user.ID, user.Firstname, user.Lastname).Scan(&id)
+
+	err := repo.db.QueryRow(ctx, query, newUserID, user.Firstname, user.Lastname).Scan(&returnedID)
 
 	if err != nil {
-		return err
+		return uuid.UUID{}, err
 	}
-	return nil
+	return returnedID, nil
 }

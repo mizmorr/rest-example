@@ -38,15 +38,15 @@ func (svc *UserWebService) GetUser(ctx context.Context, id uuid.UUID) (*model.Us
 	return user.ToWeb(), nil
 }
 
-func (svc *UserWebService) CreateUser(ctx context.Context, reqUser *model.User) (*model.User, error) {
+func (svc *UserWebService) CreateUser(ctx context.Context, reqUser *model.UserCreateRequest) (*model.User, error) {
 
-	err := svc.store.User.Create(ctx, reqUser.ToPg())
+	id, err := svc.store.User.Create(ctx, reqUser.ToPg())
 
 	if err != nil {
 		return nil, errors.Wrap(err, "svc.User.Create")
 	}
 
-	createdUser, err := svc.store.User.Get(ctx, reqUser.ID)
+	createdUser, err := svc.store.User.Get(ctx, id)
 
 	if err != nil {
 		return nil, errors.Wrap(err, "svc.User.Create")

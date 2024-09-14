@@ -163,3 +163,26 @@ func (c *UserController) Update(g *gin.Context) {
 
 	g.JSON(http.StatusOK, updUser)
 }
+
+// GetAll		 godoc
+//
+//	@Summary	Get all users
+//	@Tags		User
+//	@Schemes
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	[]model.User{}
+//	@Failure	400	{object}	error
+//
+// @Router		/user [get]
+func (c *UserController) GetAll(g *gin.Context) {
+
+	users, err := c.svc.GetAll(g.Request.Context())
+
+	if err != nil {
+		g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "users not found"})
+		return
+	}
+
+	g.JSON(http.StatusOK, users)
+}

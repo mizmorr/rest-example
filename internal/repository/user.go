@@ -82,3 +82,31 @@ func (repo *UserRepo) Update(ctx context.Context, user *model.PGUser) (uuid.UUID
 
 	return id, nil
 }
+
+func (repo *UserRepo) GetAll(ctx context.Context) ([]*model.PGUser, error) {
+
+	rows, err := repo.db.Query(ctx, "select * from users")
+
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var users []*model.PGUser
+	// to do allocation users := make([]model.PGUser, 0, selected_users)
+
+	for rows.Next() {
+		var user model.PGUser
+		err := rows.Scan(&user.ID, &user.Firstname, &user.Lastname, &user.CreatedAt)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, &user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return users, nil
+}

@@ -12,4 +12,5 @@ type UserRepo interface {
 	Create(ctx context.Context, user *model.PGUser) (uuid.UUID, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 	Update(ctx context.Context, user *model.PGUser) (uuid.UUID, error)
+	GetAll(ctx context.Context) ([]*model.PGUser, error)
 }

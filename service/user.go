@@ -86,3 +86,20 @@ func (svc *UserWebService) UpdateUser(ctx context.Context, req *model.UserUpdate
 
 	return updatedUser.ToWeb(), nil
 }
+
+func (svc *UserWebService) GetAll(ctx context.Context) ([]*model.User, error) {
+
+	pgUsers, err := svc.store.User.GetAll(ctx)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "svc.User.GetAll")
+	}
+
+	webUsers := make([]*model.User, 0, len(pgUsers))
+
+	for _, usr := range pgUsers {
+		webUsers = append(webUsers, usr.ToWeb())
+	}
+
+	return webUsers, nil
+}

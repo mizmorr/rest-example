@@ -1,0 +1,7 @@
+[Unit] Description=goweb
+[Service] Type=simple
+Restart=always
+RestartSec=5s
+ExecStart=/home/temporary/work/rest/cmd/app/main
+[Install] WantedBy=multi-user.target
+

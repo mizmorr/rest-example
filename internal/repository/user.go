@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/mizmorr/rest-example/internal/model"
@@ -46,4 +47,38 @@ func (repo *UserRepo) Create(ctx context.Context, user *model.PGUser) (uuid.UUID
 		return uuid.UUID{}, err
 	}
 	return returnedID, nil
+}
+
+func (repo *UserRepo) Delete(ctx context.Context, id uuid.UUID) error {
+
+	query := `
+	delete from users where id=$1
+	`
+	res, err := repo.db.Exec(ctx, query, id)
+
+	if err != nil {
+		return err
+	}
+
+	if res.RowsAffected() == 0 {
+		return fmt.Errorf("no rows affected")
+	}
+	return nil
+}
+
+func (repo *UserRepo) Update(ctx context.Context, user *model.PGUser) (uuid.UUID, error) {
+
+	var id uuid.UUID
+
+	query := `
+	update users set firstname=$1, lastname=$2 where id=$3 returning id
+	`
+	row := repo.db.QueryRow(ctx, query, user.Firstname, user.Lastname, user.ID)
+
+	if err := row.Scan(&id); err != nil {
+		return uuid.UUID{}, err
+
+	}
+
+	return id, nil
 }

@@ -24,6 +24,12 @@ type UserCreateRequest struct {
 	Lastname  string `json:"lastname" validate:"required"`
 }
 
+type UserUpdateRequest struct {
+	ID        uuid.UUID `json:"id"`
+	Firstname string    `json:"firstname" validate:"required"`
+	Lastname  string    `json:"lastname" validate:"required"`
+}
+
 func (user *User) ToPg() *PGUser {
 
 	return &PGUser{
@@ -47,5 +53,13 @@ func (ucr *UserCreateRequest) ToPg() *PGUser {
 	return &PGUser{
 		Firstname: ucr.Firstname,
 		Lastname:  ucr.Lastname,
+	}
+}
+
+func (upr *UserUpdateRequest) ToPg() *PGUser {
+	return &PGUser{
+		ID:        upr.ID,
+		Firstname: upr.Firstname,
+		Lastname:  upr.Lastname,
 	}
 }

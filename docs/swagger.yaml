@@ -24,6 +24,18 @@ definitions:
     - firstname
     - lastname
     type: object
+  model.UserUpdateRequest:
+    properties:
+      firstname:
+        type: string
+      id:
+        type: string
+      lastname:
+        type: string
+    required:
+    - firstname
+    - lastname
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -31,33 +43,7 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
-  /user/{id}:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: userid
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/model.User'
-        "400":
-          description: Bad Request
-          schema: {}
-        "404":
-          description: Not Found
-          schema: {}
-      summary: Get user
-      tags:
-      - User
-  /user/create:
+  /user:
     post:
       consumes:
       - application/json
@@ -82,6 +68,83 @@ paths:
           description: Bad Request
           schema: {}
       summary: Create user
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: update user data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.UserUpdateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+      summary: Update user
+      tags:
+      - User
+  /user/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: userid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "409":
+          description: Conflict
+          schema: {}
+      summary: Delete user
+      tags:
+      - User
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: userid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema: {}
+        "404":
+          description: Not Found
+          schema: {}
+      summary: Get user
       tags:
       - User
 swagger: "2.0"

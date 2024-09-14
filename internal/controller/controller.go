@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	"log"
+	"fmt"
 
 	"net/http"
 
@@ -74,22 +74,92 @@ func (c *UserController) Get(g *gin.Context) {
 //	@Failure	400	{object}	error
 //	@Failure	304	{object}	error
 //
-// @Router		/user/create [post]
+// @Router		/user [post]
 func (c *UserController) Create(g *gin.Context) {
 	userCreateReq := model.UserCreateRequest{}
 	err := g.Bind(&userCreateReq)
 	if err != nil {
-		g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "failed"})
+		g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "create failed"})
 		return
 	}
 	createdUser, err := c.svc.CreateUser(g.Request.Context(), &userCreateReq)
 
 	if err != nil {
-		log.Default().Println(err)
-		g.AbortWithStatusJSON(http.StatusNotModified, gin.H{"status": err})
+		g.AbortWithStatusJSON(http.StatusNotModified, gin.H{"status": "create failed"})
 		return
 	}
 
 	g.JSON(http.StatusOK, createdUser)
 
+}
+
+// Delete			 godoc
+//
+//	@Summary	Delete user
+//	@Tags		User
+//	@Schemes
+//	@Accept		json
+//	@Produce	json
+//	@Param		id	path		string	true	"userid"
+//	@Success	200	{object}	string
+//	@Failure	400	{object}	error
+//	@Failure	409	{object}	error
+//
+// @Router		/user/{id} [delete]
+func (c *UserController) Delete(g *gin.Context) {
+
+	userid_raw, ok := g.Params.Get("id")
+	if !ok {
+		g.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{"status": "id not provided"})
+		return
+	}
+
+	userid, err := uuid.Parse(userid_raw)
+	if err != nil {
+
+		g.AbortWithStatusJSON(http.StatusBadRequest, map[string]string{"status": "could not parse userid"})
+		return
+	}
+
+	if err := c.svc.DeleteUser(g.Request.Context(), userid); err != nil {
+		g.AbortWithStatusJSON(http.StatusConflict, gin.H{"status": "user not deleted"})
+		return
+	}
+
+	g.JSON(http.StatusOK, gin.H{"status": fmt.Sprintf("user with id %v was deleted", userid)})
+}
+
+// Update			 godoc
+//
+//	@Summary	Update user
+//	@Tags		User
+//	@Schemes
+//	@Accept		json
+//	@Produce	json
+//	@Param		data body		model.UserUpdateRequest	true	"update user data"
+//	@Success	200	{object}	string
+//	@Failure	400	{object}	error
+//	@Failure	409	{object}	error
+//
+// @Router		/user [put]
+func (c *UserController) Update(g *gin.Context) {
+
+	userUpdate := model.UserUpdateRequest{}
+
+	err := g.Bind(&userUpdate)
+
+	if err != nil {
+		// g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "bad update request data"})
+		g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": err})
+		return
+	}
+
+	updUser, err := c.svc.UpdateUser(g.Request.Context(), &userUpdate)
+
+	if err != nil {
+		g.AbortWithStatusJSON(http.StatusNotModified, gin.H{"status": err})
+		return
+	}
+
+	g.JSON(http.StatusOK, updUser)
 }

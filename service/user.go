@@ -54,3 +54,35 @@ func (svc *UserWebService) CreateUser(ctx context.Context, reqUser *model.UserCr
 
 	return createdUser.ToWeb(), nil
 }
+
+func (svc *UserWebService) DeleteUser(ctx context.Context, id uuid.UUID) error {
+
+	err := svc.store.User.Delete(ctx, id)
+
+	if err != nil {
+		return errors.Wrap(err, "svc.User.Delete")
+	}
+
+	return nil
+}
+
+func (svc *UserWebService) UpdateUser(ctx context.Context, req *model.UserUpdateRequest) (*model.User, error) {
+
+	id, err := svc.store.User.Update(ctx, req.ToPg())
+
+	if err != nil {
+		return nil, errors.Wrap(err, "svc.User.Update")
+	}
+
+	updatedUser, err := svc.store.User.Get(ctx, id)
+
+	if err != nil {
+		return nil, errors.Wrap(err, "svc.User.Update")
+	}
+
+	if updatedUser.Firstname != req.Firstname || updatedUser.Lastname != req.Lastname {
+		return nil, errors.Wrap(fmt.Errorf("user not updated"), "svc.User.Update")
+	}
+
+	return updatedUser.ToWeb(), nil
+}

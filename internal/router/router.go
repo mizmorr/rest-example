@@ -10,7 +10,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func NewRouter(handler *gin.Engine, c *controller.UserController) {
+func NewRouter(handler *gin.Engine, c *controller.UserController, cc *controller.CacheController) {
 	handler.Use(gin.Recovery())
 	handler.Use(gin.Logger())
 	handler.GET("/metrics", gin.WrapH(promhttp.Handler()))
@@ -24,5 +24,6 @@ func NewRouter(handler *gin.Engine, c *controller.UserController) {
 		user_routes.GET("/", c.GetAll)
 		user_routes.POST("/sign-up", c.SignUp)
 	}
+	v1.GET("/cache", cc.Get)
 	handler.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

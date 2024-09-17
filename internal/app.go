@@ -15,6 +15,7 @@ import (
 	"github.com/mizmorr/rest-example/pkg/server"
 	"github.com/mizmorr/rest-example/service"
 	"github.com/mizmorr/rest-example/store"
+	"github.com/mizmorr/rest-example/store/redis"
 
 	"github.com/pkg/errors"
 )
@@ -37,13 +38,20 @@ func Run() error {
 		return errors.Wrap(err, "service.NewUserWebService failed")
 	}
 
+	cache := redis.New(0, "localhost:6379", "1234")
+
+	if err = cache.Setup(ctx); err != nil {
+		return errors.Wrap(err, "cache.Setup failed")
+	}
+	cacheController := controller.NewCache(cache)
+
 	//user controller
 
 	userController := controller.NewUsers(ctx, svc)
 
 	handler := gin.New()
 
-	router.NewRouter(handler, userController)
+	router.NewRouter(handler, userController, cacheController)
 
 	httpServer := server.New(handler)
 	l.Info().Msg(fmt.Sprintf("Server is running on %v ...", cfg.HTTPAddress))

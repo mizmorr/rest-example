@@ -50,6 +50,20 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /cache:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+      summary: Get cache
+      tags:
+      - cache
   /user:
     get:
       consumes:

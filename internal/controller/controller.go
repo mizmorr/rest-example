@@ -14,6 +14,12 @@ import (
 	"github.com/mizmorr/rest-example/service"
 )
 
+type CacheController struct {
+	cache interface {
+		Take(ctx context.Context) interface{}
+	}
+}
+
 type UserController struct {
 	ctx context.Context
 	svc *service.UserWebService
@@ -24,6 +30,14 @@ func NewUsers(ctx context.Context, svc *service.UserWebService) *UserController 
 	return &UserController{
 		ctx: ctx,
 		svc: svc,
+	}
+}
+
+func NewCache(i interface {
+	Take(ctx context.Context) interface{}
+}) *CacheController {
+	return &CacheController{
+		cache: i,
 	}
 }
 
@@ -247,6 +261,23 @@ func (c *UserController) SignUp(g *gin.Context) {
 	g.JSON(http.StatusOK, gin.H{
 		"token": token,
 	})
+}
+
+// Get			 godoc
+//
+//	@Summary	Get cache
+//	@Tags		cache
+//	@Schemes
+//	@Accept		json
+//	@Produce	json
+//	@Success	200	{object}	interface{}
+//
+// @Router		/cache [get]
+func (cc *CacheController) Get(g *gin.Context) {
+
+	data := cc.cache.Take(g.Request.Context())
+
+	g.JSON(http.StatusOK, data)
 }
 
 func auth(g *gin.Context) error {

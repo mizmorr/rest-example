@@ -1,5 +1,12 @@
 basePath: /v1
 definitions:
+  controller.requester:
+    properties:
+      name:
+        type: string
+      role:
+        type: string
+    type: object
   model.User:
     properties:
       created_at:
@@ -134,9 +141,14 @@ paths:
         "400":
           description: Bad Request
           schema: {}
+        "401":
+          description: Unauthorized
+          schema: {}
         "409":
           description: Conflict
           schema: {}
+      security:
+      - BearerAuth: []
       summary: Delete user
       tags:
       - User
@@ -165,4 +177,37 @@ paths:
       summary: Get user
       tags:
       - User
+  /user/sign-up:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: user data
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/controller.requester'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema: {}
+        "500":
+          description: Internal Server Error
+          schema: {}
+      summary: SignUp
+      tags:
+      - User
+securityDefinitions:
+  BearerAuth:
+    description: Auth for user repo
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -122,6 +122,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/sign-up": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User"
+                ],
+                "summary": "SignUp",
+                "parameters": [
+                    {
+                        "description": "user data",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controller.requester"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {}
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {}
+                    }
+                }
+            }
+        },
         "/user/{id}": {
             "get": {
                 "consumes": [
@@ -161,6 +202,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -191,6 +237,10 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {}
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {}
+                    },
                     "409": {
                         "description": "Conflict",
                         "schema": {}
@@ -200,6 +250,17 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "controller.requester": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "role": {
+                    "type": "string"
+                }
+            }
+        },
         "model.User": {
             "type": "object",
             "required": [
@@ -253,6 +314,14 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "description": "Auth for user repo",
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

@@ -3,12 +3,14 @@ package controller
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"github.com/mizmorr/rest-example/internal/model"
+	"github.com/mizmorr/rest-example/pkg/util"
 	"github.com/mizmorr/rest-example/service"
 )
 
@@ -98,15 +100,24 @@ func (c *UserController) Create(g *gin.Context) {
 //	@Summary	Delete user
 //	@Tags		User
 //	@Schemes
+//	@Security BearerAuth
 //	@Accept		json
 //	@Produce	json
 //	@Param		id	path		string	true	"userid"
 //	@Success	200	{object}	string
 //	@Failure	400	{object}	error
+//	@Failure	401	{object}	error
 //	@Failure	409	{object}	error
 //
 // @Router		/user/{id} [delete]
 func (c *UserController) Delete(g *gin.Context) {
+
+	err := auth(g)
+
+	if err != nil {
+		g.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
 
 	userid_raw, ok := g.Params.Get("id")
 	if !ok {
@@ -185,4 +196,71 @@ func (c *UserController) GetAll(g *gin.Context) {
 	}
 
 	g.JSON(http.StatusOK, users)
+}
+
+type requester struct {
+	Name string
+	Role string
+}
+
+var (
+	tokens       map[string]string
+	secreyKey, _ = util.RandomHex(20)
+)
+
+//	 SignUp		 godoc
+//
+//		@Summary	SignUp
+//		@Tags		User
+//		@Schemes
+//		@Accept		json
+//		@Produce	json
+//		@Param		data body		requester	true	"user data"
+//		@Success	200	{object}	string
+//		@Failure	400	{object}	error
+//		@Failure	500	{object}	error
+//
+// @Router		/user/sign-up [post]
+func (c *UserController) SignUp(g *gin.Context) {
+
+	tokens = make(map[string]string, 0)
+
+	var req requester
+
+	ok := g.Bind(&req)
+
+	if ok != nil {
+		g.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"status": "no name provided"})
+		return
+	}
+
+	jwtProduccer := util.NewJWT(secreyKey)
+
+	token, err := jwtProduccer.CreateToken(req.Name, req.Name)
+
+	if err != nil {
+		g.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": err.Error()})
+		return
+	}
+	tokens[token] = req.Name
+
+	g.JSON(http.StatusOK, gin.H{
+		"token": token,
+	})
+}
+
+func auth(g *gin.Context) error {
+
+	bearerToken := g.Request.Header.Get("Authorization")
+
+	if bearerToken == "" {
+		return fmt.Errorf("no api key")
+	}
+	reqToken := strings.Split(bearerToken, " ")[1]
+
+	if _, ok := tokens[reqToken]; !ok {
+		return fmt.Errorf("user not recognised")
+	}
+	return nil
+
 }

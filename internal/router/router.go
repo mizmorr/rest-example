@@ -22,6 +22,7 @@ func NewRouter(handler *gin.Engine, c *controller.UserController) {
 		user_routes.DELETE("/:id", c.Delete)
 		user_routes.PUT("/", c.Update)
 		user_routes.GET("/", c.GetAll)
+		user_routes.POST("/sign-up", c.SignUp)
 	}
 	handler.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }

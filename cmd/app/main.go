@@ -12,6 +12,11 @@ import (
 //	@host		localhost:8080
 //	@BasePath	/v1
 
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Auth for user repo
+
 func main() {
 
 	if err := run(); err != nil {

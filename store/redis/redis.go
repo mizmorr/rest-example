@@ -23,7 +23,7 @@ func (d data) MarshalBinary() ([]byte, error) {
 	return json.Marshal(d)
 }
 
-func (d data) UnmarshalBinary(res []byte) error {
+func (d *data) UnmarshalBinary(res []byte) error {
 	return json.Unmarshal(res, &d)
 }
 
@@ -43,6 +43,12 @@ func (c *cache) Setup(ctx context.Context) error {
 
 	cfg := config.Get()
 
+	err := c.FlushDB(ctx).Err()
+
+	if err != nil {
+		return err
+	}
+
 	curData := data{
 		Github:      "github.com/mizmorr",
 		Pgaddress:   cfg.PgURL,
@@ -60,7 +66,12 @@ func (c *cache) Setup(ctx context.Context) error {
 func (c *cache) Take(ctx context.Context) interface{} {
 	var d data
 
-	c.Get(ctx, "1").Scan(&d)
+	str, _ := c.Get(ctx, "1").Result()
+
+	err := d.UnmarshalBinary([]byte(str))
+	if err != nil {
+		return nil
+	}
 
 	return &d
 }

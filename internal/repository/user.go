@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/mizmorr/rest-example/internal/model"
 	"github.com/mizmorr/rest-example/store/pg"
 )
@@ -36,13 +37,10 @@ func (repo *UserRepo) Create(ctx context.Context, user *model.PGUser) (uuid.UUID
 		newUserID  uuid.UUID = uuid.New()
 		returnedID uuid.UUID
 	)
-
 	query := `
 	insert into users values($1,$2,$3) returning id
 	`
-
 	err := repo.db.QueryRow(ctx, query, newUserID, user.Firstname, user.Lastname).Scan(&returnedID)
-
 	if err != nil {
 		return uuid.UUID{}, err
 	}
@@ -51,16 +49,34 @@ func (repo *UserRepo) Create(ctx context.Context, user *model.PGUser) (uuid.UUID
 
 func (repo *UserRepo) Delete(ctx context.Context, id uuid.UUID) error {
 
-	query := `
-	delete from users where id=$1
-	`
-	res, err := repo.db.Exec(ctx, query, id)
+	deleteInfo := initDeleteUserInfo(id)
+	return repo.deleteExecute(ctx, *deleteInfo)
+}
+
+type deleteUserInfo struct {
+	query string
+	id    uuid.UUID
+}
+
+func initDeleteUserInfo(
+	id uuid.UUID) *deleteUserInfo {
+	return &deleteUserInfo{
+		query: `delete from users where id=$1`,
+		id:    id,
+	}
+}
+
+func (repo *UserRepo) deleteExecute(ctx context.Context, dui deleteUserInfo) error {
+	res, err := repo.db.Exec(ctx, dui.query, dui.id)
+	return repo.checkDeleteResult(res, err)
+}
+
+func (repo *UserRepo) checkDeleteResult(deleteRes pgconn.CommandTag, err error) error {
 
 	if err != nil {
 		return err
 	}
-
-	if res.RowsAffected() == 0 {
+	if deleteRes.RowsAffected() == 0 {
 		return fmt.Errorf("no rows affected")
 	}
 	return nil
